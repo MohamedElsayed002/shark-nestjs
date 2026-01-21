@@ -1,24 +1,12 @@
 {
     "version": 2,
-    "builds": [
+    "buildCommand": "npm run build",
+    "installCommand": "npm install",
+    "framework": null,
+    "rewrites": [
         {
-            "src": "dist/src/main.js",
-            "use": "@vercel/node"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "dist/src/main.js",
-            "methods": [
-                "GET",
-                "POST",
-                "PUT",
-                "DELETE"
-            ],
-            "headers": {
-                "Access-Control-Allow-Origin": "*"
-            }
+            "source": "/(.*)",
+            "destination": "/api"
         }
     ]
 }

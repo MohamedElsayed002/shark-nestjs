@@ -2,9 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import helmet from 'helmet'
+import helmet from 'helmet';
 
-// npm install --production
+let appInstance: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +14,18 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true
   }));
-  await app.listen(process.env.PORT ?? 3000);
+
+  await app.init();
+  appInstance = app;
+  return app;
 }
-bootstrap();
+
+// For local development
+if (require.main === module) {
+  bootstrap().then(app => {
+    app.listen(process.env.PORT ?? 3000);
+  });
+}
+
+// Export app instance for Vercel
+export { bootstrap, appInstance };
