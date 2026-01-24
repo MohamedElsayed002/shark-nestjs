@@ -32,6 +32,19 @@ export class ServicesController {
     return this.servicesService.getAllServices();
   }
 
+  @Get('/single-service/:id')
+  async getSingleSerivce(@Param('id', ParseObjectIdPipe) id: string, @Body('lang') lang: string) {
+    // console.log(id, lang)
+    // return true
+    return this.servicesService.getSingleSerivce(lang,id)
+  }
+
+  @Get('/services-by-category')
+  async getServicesByCategory(@Body('category') category: string, @Body('lang') lang: string) {
+    // return {category,lang}
+    return this.servicesService.getServicesByCategory(lang, category)
+  }
+
   @Get('get-all-products')
   async getAllProducts(@Body('lang') lang: string, @Body('category') category: string, @Body('search') search: string) {
     return this.servicesService.getAllProducts(lang, category, search)
@@ -46,4 +59,6 @@ export class ServicesController {
   async getUserServices(@Param('id', ParseObjectIdPipe) id: string) {
     return this.servicesService.getAllUserService(id);
   }
+
+
 }

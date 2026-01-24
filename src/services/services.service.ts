@@ -138,7 +138,28 @@ export class ServicesService {
     return this.serviceRepository.findById(id);
   }
 
+
+  // TODO: Not need to send the id of the user 
   async getAllUserService(id: string) {
     return this.serviceRepository.findAllUsersServices(id);
   }
+
+
+  async getServicesByCategory(lang: string, category: string) {
+    return this.serviceRepository.findWithDetails({category},lang)
+  }
+
+  async getSingleSerivce(lang:string,serviceId: string) {
+    const service = await this.serviceRepository.findById(serviceId).populate({
+      path:'details',
+      match: {lang}
+    })
+    
+    if(!service || !service.details || service.details.length === 0) {
+      throw new BadRequestException(`Product not found with id ${serviceId}`)
+    } 
+
+    return service
+  }
+
 }
