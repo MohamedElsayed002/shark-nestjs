@@ -137,3 +137,130 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+Reviewing the project structure to understand the setup.
+
+
+[3 tools called]
+
+
+Reviewing `vercel.json` and `main.ts` to configure Vercel deployment:
+
+
+[2 tools called]
+
+
+Updating configuration for Vercel: modifying `main.ts` to export the app instance and updating `vercel.json` accordingly.
+
+
+[2 tools called]
+
+
+Updating `main.ts` and `vercel.json` for Vercel:
+
+
+[2 tools called]
+
+
+Creating the `api` directory and handler for Vercel:
+
+
+[2 tools called]
+
+
+Revising the approach. Creating the `api` directory structure for Vercel:
+
+
+[2 tools called]
+
+
+Creating a proper Vercel handler. Creating the `api` directory and updating the configuration:
+
+
+[3 tools called]
+
+
+Improving the API handler and checking for issues:
+
+
+[2 tools called]
+
+
+Creating a `.vercelignore` file and a deployment guide:
+
+
+[1 tool called]
+
+
+Improving the API handler and adding deployment documentation:
+
+
+[2 tools called]
+
+
+Verifying the setup is correct. Checking `src/main.ts` for proper exports:
+
+
+[1 tool called]
+
+
+Checking TypeScript configuration to ensure exports are compatible:
+
+
+[1 tool called]
+
+
+TypeScript is configured for ES modules (`nodenext`). Updating the API handler to use dynamic import for ES modules:
+
+
+[1 tool called]
+
+
+## Summary
+
+Configured your NestJS project for Vercel deployment:
+
+### Changes made
+
+1. Updated `src/main.ts`:
+   - Exported the `bootstrap` function for Vercel
+   - Maintained local development functionality
+   - Added app initialization for serverless environments
+
+2. Created `api/index.js`:
+   - Vercel serverless function handler
+   - Caches the NestJS app instance
+   - Uses dynamic import for ES module compatibility
+
+3. Updated `vercel.json`:
+   - Configured build settings
+   - Set up routing to forward all requests to the API handler
+
+4. Updated `README.md`:
+   - Added Vercel deployment instructions
+
+### Next steps to deploy
+
+1. Set environment variables in Vercel:
+   - `MONGO_URI` — MongoDB connection string
+   - `JWT_SECRET` — JWT secret (if used)
+   - Other variables your app needs
+
+2. Deploy:
+   - Option A: Via Vercel Dashboard
+     - Push code to GitHub/GitLab/Bitbucket
+     - Import repository in Vercel
+     - Vercel will auto-detect the configuration
+   - Option B: Via CLI
+     ```bash
+     npm i -g vercel
+     vercel
+     ```
+
+### Important notes
+
+- Make sure your MongoDB database is accessible from the internet (not just localhost)
+- The build command `npm run build` will compile your TypeScript to the `dist` folder
+- All routes are forwarded to `/api`, which serves your NestJS application
+
+The project is ready to deploy. Configure environment variables and deploy.

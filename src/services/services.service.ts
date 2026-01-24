@@ -1,30 +1,137 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateServiceDto } from './dto/services.dto';
 import { ServiceRepository } from './repostories/service.repository';
-import { Services } from 'src/schemas/services.schema';
+import slugify from 'slugify';
+import { ServiceSearchService } from './product-search-serivce';
+import { ServiceDetail, ServiceDetailsDocument } from 'src/schemas/service-detail';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model } from 'mongoose';
+import { ServicesDocument } from 'src/schemas/services.schema';
 
 @Injectable()
 export class ServicesService {
   private readonly logger = new Logger(ServicesService.name);
 
-  constructor(private readonly serviceRepository: ServiceRepository) {}
+  constructor(
+    private readonly serviceRepository: ServiceRepository,
+    private readonly servicesSearchService: ServiceSearchService,
+    @InjectModel(ServiceDetail.name)
+    private serviceDetailModel: Model<ServiceDetailsDocument>
+  ) { }
+
+
+  async isTitleTaken(title: string): Promise<boolean> {
+    const product = await this.serviceDetailModel.findOne({ title })
+    return !!product
+  }
 
   async createService(
     serviceData: CreateServiceDto,
     userId: any,
-  ): Promise<Services> {
+  ) {
     this.logger.log(`Created Service by ${userId}`);
 
-    const payload = {
-      ...serviceData,
-      owner: userId,
-    };
 
-    return this.serviceRepository.create(payload);
+    if (!serviceData.details || serviceData.details.length !== 2) {
+      throw new BadRequestException('Product must have exactly one Arabic and one English detail')
+    }
+
+    if (!serviceData.category) {
+      throw new BadRequestException('Category is required')
+    }
+
+    const slugs = serviceData.details.map((detail) => ({
+      ...detail,
+      slug: detail.lang === 'ar' ? detail.title.replace(/\s+/g, '-') :
+        slugify(detail.title, { lower: true, strict: true })
+    }))
+
+    const existingSlug = await this.serviceDetailModel.findOne({
+      slug: { $in: slugs.map((d) => d.slug) }
+    })
+
+    if (existingSlug) {
+      throw new BadRequestException(`A servic detail with the slug ${existingSlug.slug} already exists`)
+    }
+
+    const service = await this.serviceRepository.create({
+      category: serviceData.category,
+      owner: userId
+    })
+
+    const details: mongoose.Types.ObjectId[] = []
+
+    for (const detailData of slugs) {
+      const detail = new this.serviceDetailModel(detailData)
+      await detail.save()
+      details.push(detail._id as mongoose.Types.ObjectId)
+    }
+
+    const populatedDetails = await this.serviceDetailModel
+      .find({ _id: { $in: details } }).exec()
+
+    const updated = await this.serviceRepository.updateById(String(service._id), {
+      details: populatedDetails as any
+    })
+
+    return updated as any
+  }
+
+  async getAllProducts(
+    lang: string,
+    category: string = '',
+    search: string = ''
+  ): Promise<ServicesDocument[]> {
+
+    try {
+      const validLang = await this.servicesSearchService.validateLang(lang)
+
+      if (!validLang) {
+        console.log(`Invalid lang: ${lang}`)
+        return []
+      }
+
+      // Step 2: Query Product Detail for matching title and lang
+      const filter = await this.servicesSearchService.buildFilterByLangCategorySearch(
+        lang,
+        category,
+        search
+      )
+
+      if (filter === null) {
+        console.log(`No matching ProductDetails found for search, return empty`)
+        return []
+      }
+
+      const products = await this.serviceRepository.findWithDetails(filter, lang).exec()
+
+      const filteredProducts = products.filter(
+        (product) => product.details.length > 0
+      )
+
+      if (filteredProducts.length === 0 && products.length > 0) {
+        console.log(`All Products filtered out due to empty details after population`)
+      } else if (filteredProducts.length === 0) {
+        console.log('No products found matching the criteria')
+      }
+
+      return filteredProducts
+
+    } catch (error) {
+      throw new Error(`Failed to fetch products: ${error.message}`);
+
+    }
   }
 
   async getAllServices() {
-    return this.serviceRepository.findAll();
+    return this.serviceRepository.findAll()
+  }
+
+  async getAllServicesDetails() {
+    // Assuming you want to populate details after finding all services
+    const services = await this.serviceRepository.findAll();
+    // Populate details manually for each service, if needed
+    return this.serviceDetailModel.populate(services, { path: 'details' });
   }
 
   async getSingleService(id: string) {

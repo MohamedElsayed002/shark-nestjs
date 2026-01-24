@@ -8,6 +8,9 @@ import {
   IsOptional,
   IsString,
   IsIn,
+  Matches,
+  MinLength,
+  ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -26,14 +29,41 @@ export class RevenueProofDto {
   source?: string; // stripe, paypal, adsense...
 }
 
-export class CreateServiceDto {
-  @IsString()
-  @IsNotEmpty()
-  title: string;
 
-  @IsString()
+export class ServiceDetailsDto {
   @IsNotEmpty()
+  @IsString()
+  @Matches(/^(en|ar)$/, { message: "Language must be 'en' or 'ar'." }) // Ensure valid language codes
+  lang: string
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  @Matches(/\S/, { message: 'Title cannot contain only whitespace.' }) // Prevents empty string with spaces
+  title: string
+
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(10)
+  @Matches(/\S/, { message: 'Description cannot contain only whitespace.' }) // Prevents empty string with spaces
   description: string;
+}
+
+export class CreateServiceDto {
+  // @IsString()
+  // @IsNotEmpty()
+  // title: string;
+
+  // @IsString()
+  // @IsNotEmpty()
+  // description: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({each: true})
+  @Type(() => ServiceDetailsDto)
+  @ArrayMinSize(1, { message: 'At least one product detail is required.' }) // Ensures at least one detail exists
+  details: ServiceDetailsDto[]
 
   // usually injected from token, not from body
   @IsOptional()

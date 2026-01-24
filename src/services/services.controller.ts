@@ -15,7 +15,7 @@ import { ParseObjectIdPipe } from '@nestjs/mongoose';
 
 @Controller('services')
 export class ServicesController {
-  constructor(private readonly servicesService: ServicesService) {}
+  constructor(private readonly servicesService: ServicesService) { }
 
   @Post()
   @UseGuards(AuthGuard)
@@ -30,6 +30,11 @@ export class ServicesController {
   @Get()
   async getAllServices() {
     return this.servicesService.getAllServices();
+  }
+
+  @Get('get-all-products')
+  async getAllProducts(@Body('lang') lang: string, @Body('category') category: string, @Body('search') search: string) {
+    return this.servicesService.getAllProducts(lang, category, search)
   }
 
   @Get(':id')

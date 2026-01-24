@@ -1,16 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { Auth } from './auth.schema';
+import { ServiceDetail } from './service-detail';
 
 export type ServicesDocument = HydratedDocument<Services>;
 
 @Schema({ timestamps: true })
 export class Services {
-  @Prop({ required: true })
-  title: string;
 
-  @Prop({ required: true })
-  description: string;
+  @Prop({
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: ServiceDetail.name,
+        required: true
+      }
+    ]
+  })
+  details: Array<ServiceDetail>
 
   @Prop({ required: true, type: Types.ObjectId, ref: Auth.name })
   owner: Types.ObjectId;
