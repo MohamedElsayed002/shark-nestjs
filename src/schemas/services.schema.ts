@@ -61,7 +61,7 @@ export class Services {
     fileId: string;
     fileType: string;
     source?: string;
-  }[];
+  };
 
   // Verification
   @Prop({ default: false })

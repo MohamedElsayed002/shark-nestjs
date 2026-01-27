@@ -21,7 +21,8 @@ export class RevenueProofDto {
   @IsString()
   fileId: string;
 
-  @IsIn(['screenshot', 'pdf', 'csv'])
+  // @IsIn(['screenshot', 'pdf', 'csv'])
+  @IsString()
   fileType: string;
 
   @IsOptional()
@@ -105,26 +106,26 @@ export class CreateServiceDto {
 
   @IsOptional()
   @IsArray()
-  @IsIn(
-    [
-      'adsense',
-      'subscriptions',
-      'digital_products',
-      'affiliate',
-      'services',
-      'apps',
-    ],
-    { each: true },
-  )
+  // @IsIn(
+  //   [
+  //     'adsense',
+  //     'subscriptions',
+  //     'digital_products',
+  //     'affiliate',
+  //     'services',
+  //     'apps',
+  //   ],
+    // { each: true },
+  // )
   incomeSources?: string[];
 
   // ---------- Revenue Proofs ----------
 
   @IsOptional()
-  @IsArray()
+  // @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RevenueProofDto)
-  revenueProofs?: RevenueProofDto[];
+  revenueProofs?: RevenueProofDto;
 
   // ---------- Verification ----------
 
