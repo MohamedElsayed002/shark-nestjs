@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   SetMetadata,
   UseGuards,
@@ -33,10 +34,8 @@ export class ServicesController {
   }
 
   @Get('/single-service/:id')
-  async getSingleSerivce(@Param('id', ParseObjectIdPipe) id: string, @Body('lang') lang: string) {
-    // console.log(id, lang)
-    // return true
-    return this.servicesService.getSingleSerivce(lang,id)
+  async getSingleSerivce(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.servicesService.getSingleSerivceReview(id)
   }
 
   @Get('/services-by-category')

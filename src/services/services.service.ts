@@ -149,12 +149,11 @@ export class ServicesService {
     return this.serviceRepository.findWithDetails({category},lang)
   }
 
-  async getSingleSerivce(lang:string,serviceId: string) {
+  async getSingleSerivceReview(serviceId: string) {
     const service = await this.serviceRepository.findById(serviceId).populate({
       path:'details',
-      match: {lang}
+      // match: {lang}
     })
-    
     if(!service || !service.details || service.details.length === 0) {
       throw new BadRequestException(`Product not found with id ${serviceId}`)
     } 
