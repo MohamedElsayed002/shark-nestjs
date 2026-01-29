@@ -35,4 +35,9 @@ export class UserController {
   async userInfo(@Req() req: { user: UserData }) {
     return this.userSerivce.getUser(req.user._id);
   }
+
+  @Get('all-users')
+  async getAllUsers() {
+    return this.userSerivce.getAllUsers()
+  }
 }

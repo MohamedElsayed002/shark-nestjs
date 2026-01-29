@@ -28,6 +28,10 @@ export class ServiceRepository {
     return this.serviceModel.find({platformVerificationRequested: false}).exec()
   }
 
+  findAllVerified() {
+    return this.serviceModel.find({platformVerificationRequested: true}).exec()
+  }
+
   find(filter: FilterQuery<ServicesDocument>) {
     return this.serviceModel.find(filter)
   }

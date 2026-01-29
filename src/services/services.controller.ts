@@ -34,6 +34,11 @@ export class ServicesController {
     return this.servicesService.getAllServices();
   }
 
+  @Get('/verified-services')
+  async getAllVerifiedServices() {
+    return this.servicesService.getAllVerifiedServices()
+  }
+
   @Get('/single-service/:id')
   async getSingleSerivce(@Param('id', ParseObjectIdPipe) id: string) {
     return this.servicesService.getSingleSerivceReview(id)

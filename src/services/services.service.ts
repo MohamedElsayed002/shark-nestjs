@@ -139,6 +139,10 @@ export class ServicesService {
     return this.serviceRepository.findAll()
   }
 
+  async getAllVerifiedServices() {
+    return this.serviceRepository.findAllVerified()
+  }
+
   async getAllServicesDetails() {
     // Assuming you want to populate details after finding all services
     const services = await this.serviceRepository.findAll();

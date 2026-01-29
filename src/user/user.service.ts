@@ -120,4 +120,8 @@ export class UserService {
 
     return user;
   }
+
+  async getAllUsers() {
+    return this.authModel.find().exec()
+  }
 }
