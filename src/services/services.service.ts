@@ -56,7 +56,16 @@ export class ServicesService {
 
     const service = await this.serviceRepository.create({
       category: serviceData.category,
-      owner: userId
+      owner: userId,
+      imageUrl: serviceData.imageUrl || '',
+      isProfitable: serviceData.isProfitable || false,
+      revenueProofs: serviceData.revenueProofs,
+      averageMonthlyExpenses: serviceData.averageMonthlyExpenses || 0,
+      averageMonthlyRevenue: serviceData.averageMonthlyExpenses || 0,
+      incomeSources: serviceData.incomeSources || [],
+      verificationLevel: serviceData.verificationLevel || "basic",
+      netProfit: serviceData.netProfit || 0,
+      platformVerificationRequested: false
     })
 
     const details: mongoose.Types.ObjectId[] = []

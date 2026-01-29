@@ -71,7 +71,7 @@ export class CreateServiceDto {
   @IsMongoId()
   owner?: string;
 
-  @IsOptional()
+  // @IsOptional()
   @IsString()
   imageUrl?: string;
 
