@@ -25,7 +25,7 @@ export class ServiceRepository {
   }
 
   findAll() {
-    return this.serviceModel.find().exec()
+    return this.serviceModel.find({platformVerificationRequested: false}).exec()
   }
 
   find(filter: FilterQuery<ServicesDocument>) {

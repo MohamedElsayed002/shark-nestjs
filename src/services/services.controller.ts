@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -36,6 +37,11 @@ export class ServicesController {
   @Get('/single-service/:id')
   async getSingleSerivce(@Param('id', ParseObjectIdPipe) id: string) {
     return this.servicesService.getSingleSerivceReview(id)
+  }
+
+  @Patch('/update-service-verification/:id')
+  async updateServiceVerification(@Param('id', ParseObjectIdPipe) id: string, @Body('verification') verification: boolean) {
+    return this.servicesService.updateService(id, verification)
   }
 
   @Get('/services-by-category')

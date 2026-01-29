@@ -6,7 +6,7 @@ import { ServiceSearchService } from './product-search-serivce';
 import { ServiceDetail, ServiceDetailsDocument } from 'src/schemas/service-detail';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { ServicesDocument } from 'src/schemas/services.schema';
+import { Services, ServicesDocument } from 'src/schemas/services.schema';
 
 @Injectable()
 export class ServicesService {
@@ -16,7 +16,10 @@ export class ServicesService {
     private readonly serviceRepository: ServiceRepository,
     private readonly servicesSearchService: ServiceSearchService,
     @InjectModel(ServiceDetail.name)
-    private serviceDetailModel: Model<ServiceDetailsDocument>
+    private serviceDetailModel: Model<ServiceDetailsDocument>,
+
+    @InjectModel(Services.name)
+    private serviceModel: Model<ServicesDocument>,
   ) { }
 
 
@@ -61,7 +64,7 @@ export class ServicesService {
       isProfitable: serviceData.isProfitable || false,
       revenueProofs: serviceData.revenueProofs,
       averageMonthlyExpenses: serviceData.averageMonthlyExpenses || 0,
-      averageMonthlyRevenue: serviceData.averageMonthlyExpenses || 0,
+      averageMonthlyRevenue: serviceData.averageMonthlyRevenue || 0,
       incomeSources: serviceData.incomeSources || [],
       verificationLevel: serviceData.verificationLevel || "basic",
       netProfit: serviceData.netProfit || 0,
@@ -155,19 +158,27 @@ export class ServicesService {
 
 
   async getServicesByCategory(lang: string, category: string) {
-    return this.serviceRepository.findWithDetails({category},lang)
+    return this.serviceRepository.findWithDetails({ category }, lang)
   }
 
   async getSingleSerivceReview(serviceId: string) {
     const service = await this.serviceRepository.findById(serviceId).populate({
-      path:'details',
+      path: 'details',
       // match: {lang}
     })
-    if(!service || !service.details || service.details.length === 0) {
+    if (!service || !service.details || service.details.length === 0) {
       throw new BadRequestException(`Product not found with id ${serviceId}`)
-    } 
+    }
 
     return service
+  }
+
+  async updateService(serviceId: string, verification: boolean) {
+    return this.serviceModel.findByIdAndUpdate(
+      serviceId,
+      { platformVerificationRequested: verification },
+      { new: true }
+    )
   }
 
 }
