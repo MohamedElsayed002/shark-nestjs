@@ -48,6 +48,12 @@ export class ServicesController {
     return this.servicesService.getSingleSerivceReview(id)
   }
 
+  // Single Service for Users
+  @Get('/single-service-users/:id')
+  async getSingleServiceUsersReview(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.servicesService.getSingleServiceUsersReview(id)
+  }
+
   // Verify Servicd
   @Patch('/update-service-verification/:id')
   async updateServiceVerification(@Param('id', ParseObjectIdPipe) id: string, @Body('verification') verification: boolean) {

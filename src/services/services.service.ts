@@ -180,6 +180,18 @@ export class ServicesService {
     return service
   }
 
+  async getSingleServiceUsersReview(serviceId: string) {
+    const service = await this.serviceRepository.findById(serviceId).populate({
+      path: 'details',
+      // match: {lang}
+    }).populate({path: 'owner'})
+    if (!service || !service.details || service.details.length === 0) {
+      throw new BadRequestException(`Product not found with id ${serviceId}`)
+    }
+
+    return service
+  }
+
   async updateService(serviceId: string, verification: boolean) {
     return this.serviceModel.findByIdAndUpdate(
       serviceId,
