@@ -115,7 +115,10 @@ export class ServicesService {
         return []
       }
 
-      const products = await this.serviceRepository.findWithDetails(filter, lang).exec()
+      const products = await this.serviceRepository.findWithDetails(
+        { ...filter, platformVerificationRequested: true },
+        lang
+      ).exec()
 
       const filteredProducts = products.filter(
         (product) => product.details.length > 0

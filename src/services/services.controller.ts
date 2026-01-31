@@ -19,6 +19,7 @@ import { ParseObjectIdPipe } from '@nestjs/mongoose';
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) { }
 
+  // Create Service
   @Post()
   @UseGuards(AuthGuard)
   @SetMetadata('roles', ['Admin', 'User'])
@@ -29,25 +30,30 @@ export class ServicesController {
     return this.servicesService.createService(createService, req.user._id);
   }
 
+  // ALL Services without verificaiton
   @Get()
   async getAllServices() {
     return this.servicesService.getAllServices();
   }
 
+  // All Services with verification
   @Get('/verified-services')
   async getAllVerifiedServices() {
     return this.servicesService.getAllVerifiedServices()
   }
 
+  // Single Service for Admin both English and Arabic
   @Get('/single-service/:id')
   async getSingleSerivce(@Param('id', ParseObjectIdPipe) id: string) {
     return this.servicesService.getSingleSerivceReview(id)
   }
 
+  // Verify Servicd
   @Patch('/update-service-verification/:id')
   async updateServiceVerification(@Param('id', ParseObjectIdPipe) id: string, @Body('verification') verification: boolean) {
     return this.servicesService.updateService(id, verification)
   }
+
 
   @Get('/services-by-category')
   async getServicesByCategory(@Body('category') category: string, @Body('lang') lang: string) {
@@ -56,7 +62,7 @@ export class ServicesController {
   }
 
   @Get('get-all-products')
-  async getAllProducts(@Body('lang') lang: string, @Body('category') category: string, @Body('search') search: string) {
+  async getAllProducts(@Query('lang') lang: string, @Query('category') category: string, @Query('search') search: string) {
     return this.servicesService.getAllProducts(lang, category, search)
   }
 
