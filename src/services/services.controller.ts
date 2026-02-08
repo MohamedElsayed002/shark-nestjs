@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -83,4 +84,8 @@ export class ServicesController {
   }
 
 
+  @Delete(':id')
+  async deleteService(@Param('id',ParseObjectIdPipe) id: string) {
+    return this.servicesService.deleteService(id)
+  }
 }

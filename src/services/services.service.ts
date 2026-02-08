@@ -200,4 +200,31 @@ export class ServicesService {
     )
   }
 
+  async deleteService(serviceId: string) {
+    const service = await this.serviceModel.findById(serviceId)
+
+    if (!service) {
+      throw new BadRequestException(`Service not found with id ${serviceId}`)
+    }
+
+    // if (service.platformVerificationRequested) {
+    //   throw new BadRequestException(`Service is already verified`)
+    // }
+
+    // 1. Delete all detail documents referenced in service.details
+
+    if(service.details?.length) {
+      await this.serviceDetailModel.deleteMany({
+        _id: { $in: service.details}
+      })
+    }
+
+    // 2. Delete the service document itself
+    await this.serviceModel.findByIdAndDelete(serviceId)
+
+    return {
+      message: `Service deleted successfully`,
+    }
+  }
+
 }
