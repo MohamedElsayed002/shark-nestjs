@@ -54,7 +54,7 @@ export class ServicesService {
     })
 
     if (existingSlug) {
-      throw new BadRequestException(`A servic detail with the slug ${existingSlug.slug} already exists`)
+      throw new BadRequestException(`A service detail with the slug ${existingSlug.slug} already exists`)
     }
 
     const service = await this.serviceRepository.create({
@@ -62,7 +62,7 @@ export class ServicesService {
       owner: userId,
       imageUrl: serviceData.imageUrl || '',
       isProfitable: serviceData.isProfitable || false,
-      revenueProofs: serviceData.revenueProofs,
+      revenueProofs: Array.isArray(serviceData.revenueProofs) ? serviceData.revenueProofs : [],
       averageMonthlyExpenses: serviceData.averageMonthlyExpenses || 0,
       averageMonthlyRevenue: serviceData.averageMonthlyRevenue || 0,
       incomeSources: serviceData.incomeSources || [],

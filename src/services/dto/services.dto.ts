@@ -122,7 +122,7 @@ export class CreateServiceDto {
   // ---------- Revenue Proofs ----------
 
   @IsOptional()
-  // @IsArray()
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => RevenueProofDto)
   revenueProofs?: RevenueProofDto;
