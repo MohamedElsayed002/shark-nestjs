@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { ServicesModule } from './services/services.module';
 import { HelpCenterModule } from './help-center/help-center.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { HelpCenterModule } from './help-center/help-center.module';
     UserModule,
     ServicesModule,
     HelpCenterModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
