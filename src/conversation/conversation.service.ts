@@ -133,6 +133,24 @@ export class ConversationService implements OnModuleInit {
     }
   }
 
+  async getUnreadCount(userId: string): Promise<number> {
+    const userObjId = new Types.ObjectId(userId);
+    const convs = await this.conversationModel
+      .find({ participants: userObjId })
+      .select('_id')
+      .lean()
+      .exec();
+    const convIds = convs.map((c) => c._id);
+    if (convIds.length === 0) return 0;
+    return this.messageModel
+      .countDocuments({
+        conversationId: { $in: convIds },
+        senderId: { $ne: userObjId },
+        readBy: { $nin: [userObjId] },
+      })
+      .exec();
+  }
+
   async getConversationsForUser(userId: string) {
     const userObjId = new Types.ObjectId(userId);
     const list = await this.conversationModel
@@ -142,7 +160,27 @@ export class ConversationService implements OnModuleInit {
       .populate('serviceId', 'category')
       .lean()
       .exec();
-    return list;
+    const convIds = list.map((c) => c._id);
+    if (convIds.length === 0) return list;
+    const unreadCounts = await this.messageModel
+      .aggregate<{ _id: Types.ObjectId; count: number }>([
+        {
+          $match: {
+            conversationId: { $in: convIds },
+            senderId: { $ne: userObjId },
+            readBy: { $nin: [userObjId] },
+          },
+        },
+        { $group: { _id: '$conversationId', count: { $sum: 1 } } },
+      ])
+      .exec();
+    const countByConv = new Map(
+      unreadCounts.map((r) => [r._id.toString(), r.count]),
+    );
+    return list.map((conv) => ({
+      ...conv,
+      unreadCount: countByConv.get(conv._id.toString()) ?? 0,
+    }));
   }
 
   async getConversationById(
@@ -196,6 +234,17 @@ export class ConversationService implements OnModuleInit {
     limit: number = DEFAULT_MESSAGES_LIMIT,
   ) {
     await this.assertParticipant(conversationId, userId);
+    const userObjId = new Types.ObjectId(userId);
+    const convObjId = new Types.ObjectId(conversationId);
+    await this.messageModel
+      .updateMany(
+        {
+          conversationId: convObjId,
+          readBy: { $nin: [userObjId] },
+        },
+        { $addToSet: { readBy: userObjId } },
+      )
+      .exec();
 
     const query: mongoose.FilterQuery<MessageDocument> = {
       conversationId: new Types.ObjectId(conversationId),

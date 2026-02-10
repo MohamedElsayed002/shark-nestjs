@@ -29,11 +29,21 @@ export class ConversationController {
     return this.conversationService.getConversationsForUser(req.user._id);
   }
 
+  @Get('unread-count')
+  async unreadCount(@Req() req: { user: UserData }) {
+    const count = await this.conversationService.getUnreadCount(req.user._id);
+    return { count };
+  }
+
   @Get(':id')
   async getOne(
-    @Param('id', ParseObjectIdPipe) id: string,
+    @Param('id') id: string,
     @Req() req: { user: UserData },
   ) {
+    if (id === 'unread-count') {
+      const count = await this.conversationService.getUnreadCount(req.user._id);
+      return { count };
+    }
     return this.conversationService.getConversationById(id, req.user._id);
   }
 
