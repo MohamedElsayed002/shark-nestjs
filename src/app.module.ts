@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { ServicesModule } from './services/services.module';
 import { HelpCenterModule } from './help-center/help-center.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { SellModule } from './sell/sell.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ConversationModule } from './conversation/conversation.module';
     ServicesModule,
     HelpCenterModule,
     ConversationModule,
+    SellModule,
   ],
   controllers: [AppController],
   providers: [AppService],
