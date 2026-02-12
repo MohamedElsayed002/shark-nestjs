@@ -5,7 +5,7 @@ export type AuthDocument = HydratedDocument<Auth>;
 
 @Schema({ timestamps: true })
 export class Auth {
-  @Prop({ required: true })
+  @Prop({ default: '' })
   name: string;
 
   @Prop({ required: true })
@@ -14,7 +14,7 @@ export class Auth {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ required: true })
+  @Prop({ default: '' })
   location: string;
 
   @Prop()

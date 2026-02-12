@@ -23,9 +23,7 @@ export class AuthService {
   ) {}
 
   async registerUser(createUserDto: CreateUserDto): Promise<Auth> {
-    this.logger.log(
-      `Register User ${createUserDto.email} ${createUserDto.name}`,
-    );
+    this.logger.log(`Register User ${createUserDto.email}`);
 
     const { email, gender, name, password, phone, location } = createUserDto;
 
@@ -38,12 +36,12 @@ export class AuthService {
     const hashedPassword = await this.passwordHasher.hash(password);
 
     return this.authRepository.create({
-      name,
+      name: name ?? '',
       email,
       password: hashedPassword,
-      gender,
-      location,
-      phone,
+      gender: gender ?? 'Male',
+      location: location ?? '',
+      phone: phone ?? '',
     });
   }
 

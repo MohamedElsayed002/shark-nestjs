@@ -50,23 +50,27 @@ export class UpdateOnboardingDto {
 }
 
 export class CreateUserDto {
-  @IsNotEmpty({ message: 'Name is required' })
-  name: string;
-
   @IsEmail({}, { message: 'Invalid email format' })
   email: string;
 
   @MinLength(8, { message: 'Password must be at least 8 characters' })
   password: string;
 
-  @IsNotEmpty({ message: 'Location is required' })
-  location: string;
+  @IsOptional()
+  @IsString()
+  name?: string;
 
   @IsOptional()
-  phone: string;
+  @IsString()
+  location?: string;
 
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
   @IsEnum(['Male', 'Female'], { message: 'Gender must be Male or Female' })
-  gender: string;
+  gender?: string;
 }
 
 export class LoginUserDto {
