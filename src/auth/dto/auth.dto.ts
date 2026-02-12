@@ -3,8 +3,51 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
+  MaxLength,
   MinLength,
 } from 'class-validator';
+
+export class UpdateOnboardingDto {
+  @IsEnum(['buyer', 'seller', 'find_partner'], { message: 'Invalid account type' })
+  accountType: 'buyer' | 'seller' | 'find_partner';
+
+  @IsNotEmpty() @IsString()
+  firstName: string;
+
+  @IsNotEmpty() @IsString()
+  lastName: string;
+
+  @IsNotEmpty() @IsString()
+  country: string;
+
+  @IsOptional() @IsString()
+  phone?: string;
+
+  @IsOptional() @IsString() @MaxLength(2000)
+  partnerDescription?: string;
+
+  @IsOptional() @IsString()
+  companyName?: string;
+
+  @IsOptional() @IsString()
+  howHeard?: string;
+
+  @IsOptional() @IsString()
+  businessUrl?: string;
+
+  @IsOptional() @IsString()
+  category?: string;
+
+  @IsOptional() @IsString()
+  annualRevenue?: string;
+
+  @IsOptional() @IsString()
+  annualProfit?: string;
+
+  @IsOptional() @IsString()
+  businessesCount?: string;
+}
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required' })

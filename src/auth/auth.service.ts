@@ -2,13 +2,13 @@ import {
   Injectable,
   BadRequestException,
   ConflictException,
-  UnauthorizedException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { Auth } from 'src/schemas/auth.schema';
 import { PasswordHashService } from './services/password-hasher.service';
 import { TokenService } from './services/token.service';
-import { CreateUserDto, LoginUserDto } from './dto/auth.dto';
+import { CreateUserDto, LoginUserDto, UpdateOnboardingDto } from './dto/auth.dto';
 import { AuthRepository } from './repositories/auth.repository';
 import { Response } from 'express';
 
@@ -50,7 +50,7 @@ export class AuthService {
   async login(
     loginUser: LoginUserDto,
     res: Response,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; onboardingCompleted: boolean }> {
     const { email, password } = loginUser;
 
     const user = await this.authRepository.findByEmail(email);
@@ -79,7 +79,45 @@ export class AuthService {
       path: '/',
     });
 
-    return { access_token };
+    return {
+      access_token,
+      onboardingCompleted: user.onboardingCompleted === true,
+    };
+  }
+
+  async updateOnboarding(userId: string, dto: UpdateOnboardingDto): Promise<Auth> {
+
+    const user = await this.authRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const update: Partial<Auth> = {
+      onboardingCompleted: true,
+      accountType: dto.accountType,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      country: dto.country,
+      partnerDescription: dto.partnerDescription ?? '',
+      companyName: dto.companyName ?? '',
+      howHeard: dto.howHeard ?? '',
+      businessUrl: dto.businessUrl ?? '',
+      category: dto.category ?? '',
+      annualRevenue: dto.annualRevenue ?? '',
+      annualProfit: dto.annualProfit ?? '',
+      businessesCount: dto.businessesCount ?? '',
+    };
+
+    if (dto.phone !== undefined) update.phone = dto.phone;
+
+    const updated = await this.authRepository.findByIdAndUpdate(userId, update);
+
+    if (!updated) {
+      throw new NotFoundException('User not found');
+    }
+    
+    return updated;
   }
 
   async findAll(): Promise<Auth[]> {

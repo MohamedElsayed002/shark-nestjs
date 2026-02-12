@@ -26,4 +26,8 @@ export class AuthRepository {
     const user = new this.authModel(data);
     return user.save();
   }
+
+  findByIdAndUpdate(id: string, data: Partial<Auth>) {
+    return this.authModel.findByIdAndUpdate(id, { $set: data }, { new: true }).exec();
+  }
 }

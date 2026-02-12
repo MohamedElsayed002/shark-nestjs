@@ -31,6 +31,46 @@ export class Auth {
 
   @Prop({ default: 'User', enum: ['User', 'Admin'] })
   role: string;
+
+  /** Set to true after user completes onboarding; used to redirect first-time users */
+  @Prop({ default: false })
+  onboardingCompleted: boolean;
+
+  @Prop({ type: String, enum: ['buyer', 'seller', 'find_partner'], default: null })
+  accountType: string | null;
+
+  @Prop({ default: '' })
+  firstName: string;
+
+  @Prop({ default: '' })
+  lastName: string;
+
+  @Prop({ default: '' })
+  country: string;
+
+  @Prop({ default: '', maxlength: 2000 })
+  partnerDescription: string;
+
+  @Prop({ default: '' })
+  companyName: string;
+
+  @Prop({ default: '' })
+  howHeard: string;
+
+  @Prop({ default: '' })
+  businessUrl: string;
+
+  @Prop({ default: '' })
+  category: string;
+
+  @Prop({ default: '' })
+  annualRevenue: string;
+
+  @Prop({ default: '' })
+  annualProfit: string;
+
+  @Prop({ default: '' })
+  businessesCount: string;
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth);

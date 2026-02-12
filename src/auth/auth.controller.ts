@@ -3,13 +3,15 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
+  Req,
   Res,
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from './dto/auth.dto';
+import { CreateUserDto, LoginUserDto, UpdateOnboardingDto } from './dto/auth.dto';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { AuthGuard } from 'src/guard/auth-guard';
 import { type Response } from 'express';
@@ -29,6 +31,16 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authSerivce.login(data, res);
+  }
+
+  @UseGuards(AuthGuard)
+  @SetMetadata('roles', ['Admin', 'User'])
+  @Patch('onboarding')
+  async updateOnboarding(
+    @Body() data: UpdateOnboardingDto,
+    @Req() req: { user: { _id: string } },
+  ) {
+    return this.authSerivce.updateOnboarding(req.user._id, data);
   }
 
   @UseGuards(AuthGuard)
