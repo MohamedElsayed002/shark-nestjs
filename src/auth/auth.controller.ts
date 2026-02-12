@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto, UpdateOnboardingDto } from './dto/auth.dto';
+import { CreateUserDto, LoginUserDto, UpdateOnboardingDto, UploadImageDto } from './dto/auth.dto';
 import { ParseObjectIdPipe } from '@nestjs/mongoose';
 import { AuthGuard } from 'src/guard/auth-guard';
 import { type Response } from 'express';
@@ -41,6 +41,16 @@ export class AuthController {
     @Req() req: { user: { _id: string } },
   ) {
     return this.authSerivce.updateOnboarding(req.user._id, data);
+  }
+
+  @UseGuards(AuthGuard)
+  @SetMetadata('roles', ['Admin', 'User'])
+  @Patch('uploadImage')
+  async uploadImage(
+    @Body() data: UploadImageDto,
+    @Req() req: { user: { _id: string } },
+  ) {
+    return this.authSerivce.uploadImage(req.user._id, data);
   }
 
   @UseGuards(AuthGuard)

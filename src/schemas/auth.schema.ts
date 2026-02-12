@@ -71,6 +71,9 @@ export class Auth {
 
   @Prop({ default: '' })
   businessesCount: string;
+
+  @Prop({ default: '' })
+  imageUrl: string;
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth);

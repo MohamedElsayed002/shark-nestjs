@@ -78,3 +78,8 @@ export class LoginUserDto {
   @MinLength(8, { message: 'Password must be at least 8 characters' })
   password: string;
 }
+
+export class UploadImageDto {
+  @IsNotEmpty() @IsString()
+  imageUrl: string;
+}

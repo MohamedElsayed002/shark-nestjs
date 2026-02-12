@@ -8,7 +8,7 @@ import {
 import { Auth } from 'src/schemas/auth.schema';
 import { PasswordHashService } from './services/password-hasher.service';
 import { TokenService } from './services/token.service';
-import { CreateUserDto, LoginUserDto, UpdateOnboardingDto } from './dto/auth.dto';
+import { CreateUserDto, LoginUserDto, UpdateOnboardingDto, UploadImageDto } from './dto/auth.dto';
 import { AuthRepository } from './repositories/auth.repository';
 import { Response } from 'express';
 
@@ -117,6 +117,14 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
     
+    return updated;
+  }
+
+  async uploadImage(userId: string, dto: UploadImageDto): Promise<Auth> {
+    const updated = await this.authRepository.findByIdAndUpdate(userId, { imageUrl: dto.imageUrl });
+    if (!updated) {
+      throw new NotFoundException('User not found');
+    }
     return updated;
   }
 
