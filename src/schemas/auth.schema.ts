@@ -36,7 +36,7 @@ export class Auth {
   @Prop({ default: false })
   onboardingCompleted: boolean;
 
-  @Prop({ type: String, enum: ['buyer', 'seller', 'find_partner'], default: null })
+  @Prop({ type: String, enum: ['buyer', 'seller', 'find_partner', null], default: null })
   accountType: string | null;
 
   @Prop({ default: '' })
