@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Query,
   Req,
   SetMetadata,
   UseGuards,
@@ -39,5 +41,15 @@ export class UserController {
   @Get('all-users')
   async getAllUsers() {
     return this.userSerivce.getAllUsers()
+  }
+
+  @Get('user-type')
+  async getUserType(@Query("type") type: "seller" | "buyer" | "find_partner") {
+    return this.userSerivce.getUserType(type)
+  }
+
+  @Get('single-user/find-partner/:id')
+  async getSingleUser(@Param("id") id: string) {
+    return this.userSerivce.getUserFindPartner(id)
   }
 }

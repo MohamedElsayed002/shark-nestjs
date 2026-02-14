@@ -32,9 +32,9 @@
     "cookie-parser": "^1.4.7",
     "helmet": "^8.1.0",
     "mongoose": "^7.8.8",
-    "nodemailer": "^7.0.12",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sendgrid": "^5.2.3",
     "slugify": "^1.6.6"
   },
   "devDependencies": {
@@ -48,7 +48,6 @@
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
-    "@types/nodemailer": "^7.0.5",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

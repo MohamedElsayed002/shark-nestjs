@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
 import { PasswordHashService } from 'src/auth/services/password-hasher.service';
 import { Auth } from 'src/schemas/auth.schema';
-import { EmailService } from 'src/service/email.provider';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
@@ -17,7 +17,7 @@ export class UserService {
   constructor(
     @InjectModel(Auth.name) private authModel: Model<Auth>,
     private readonly passwordHasher: PasswordHashService,
-    private emailService: EmailService,
+    private readonly mailService: MailService,
     private authService: AuthService,
   ) {}
 
@@ -37,8 +37,10 @@ export class UserService {
     user.verificationCode = verificationCode;
     user.codeExpiresAt = expiresAt;
     await user.save();
-    // await this.emailService.sendVerificationCode(email,verificationCode)
-    return { message: 'Verificaiton code send to your email' };
+    this.mailService.sendVerificationCode({ to: email, code: verificationCode }).catch((err) => {
+      this.logger.warn(`Verification email failed for ${email}: ${err?.message ?? err}`);
+    });
+    return { message: 'Verification code sent to your email' };
   }
 
   async verifyCode(
@@ -111,8 +113,22 @@ export class UserService {
     };
   }
 
+
+  // Find Partner
   async getUser(id: string): Promise<Auth> {
-    const user = await this.authModel.findById(id);
+    const user = await this.authModel.findById(id).exec()
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user;
+  }
+
+  async getUserFindPartner(id: string): Promise<Auth> {
+    const user = await this.authModel.findById(id)
+    .select("_id name email location phone gender firstName lastName country partnerDescription imageUrl")
+    .exec()
 
     if (!user) {
       throw new BadRequestException('User not found');
@@ -123,5 +139,12 @@ export class UserService {
 
   async getAllUsers() {
     return this.authModel.find().exec()
+  }
+
+  async getUserType(type: string) {
+    const users = await this.authModel.find({accountType: type})
+      .select("_id name email location phone gender firstName lastName country partnerDescription imageUrl")
+
+    return users
   }
 }

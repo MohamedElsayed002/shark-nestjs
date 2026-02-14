@@ -85,8 +85,8 @@ export class ConversationService implements OnModuleInit {
 
     if (conversation) {
       return conversation.populate([
-        { path: 'participants', select: 'name email' },
-        { path: 'serviceId', select: 'category' },
+        { path: 'participants', select: 'name email imageUrl location country partnerDescription firstName lastName' },
+        { path: 'serviceId', select: 'imageUrl category', populate: { path: 'details', select: 'lang title' } },
       ]) as Promise<ConversationDocument>;
     }
 
@@ -98,8 +98,8 @@ export class ConversationService implements OnModuleInit {
         lastMessagePreview: '',
       });
       return created.populate([
-        { path: 'participants', select: 'name email' },
-        { path: 'serviceId', select: 'category' },
+        { path: 'participants', select: 'name email imageUrl location country partnerDescription firstName lastName' },
+        { path: 'serviceId', select: 'imageUrl category', populate: { path: 'details', select: 'lang title' } },
       ]) as Promise<ConversationDocument>;
     } catch (err: unknown) {
       // E11000: duplicate key (e.g. old unique index still in DB) – find and return existing
@@ -108,8 +108,8 @@ export class ConversationService implements OnModuleInit {
         conversation = await this.conversationModel.findOne(filter).exec();
         if (conversation) {
           return conversation.populate([
-            { path: 'participants', select: 'name email' },
-            { path: 'serviceId', select: 'category' },
+            { path: 'participants', select: 'name email imageUrl location country partnerDescription firstName lastName' },
+            { path: 'serviceId', select: 'imageUrl category', populate: { path: 'details', select: 'lang title' } },
           ]) as Promise<ConversationDocument>;
         }
         // Index blocks insert but we didn't find by filter (e.g. multikey uniqueness)
@@ -123,8 +123,8 @@ export class ConversationService implements OnModuleInit {
             .exec();
           if (conversation) {
             return conversation.populate([
-              { path: 'participants', select: 'name email' },
-              { path: 'serviceId', select: 'category' },
+              { path: 'participants', select: 'name email imageUrl location country partnerDescription firstName lastName' },
+              { path: 'serviceId', select: 'imageUrl category', populate: { path: 'details', select: 'lang title' } },
             ]) as Promise<ConversationDocument>;
           }
         }
@@ -156,8 +156,8 @@ export class ConversationService implements OnModuleInit {
     const list = await this.conversationModel
       .find({ participants: userObjId })
       .sort({ lastMessageAt: -1, createdAt: -1 })
-      .populate('participants', 'name email')
-      .populate('serviceId', 'category')
+      .populate('participants', 'name email imageUrl location country partnerDescription firstName lastName')
+      .populate({ path: 'serviceId', select: 'imageUrl category', populate: { path: 'details', select: 'lang title' } })
       .lean()
       .exec();
     const convIds = list.map((c) => c._id);
@@ -189,8 +189,8 @@ export class ConversationService implements OnModuleInit {
   ): Promise<ConversationDocument> {
     const conv = await this.assertParticipant(conversationId, userId);
     return conv.populate([
-      { path: 'participants', select: 'name email' },
-      { path: 'serviceId', select: 'category' },
+      { path: 'participants', select: 'name email imageUrl location country partnerDescription firstName lastName' },
+      { path: 'serviceId', select: 'imageUrl category', populate: { path: 'details', select: 'lang title' } },
     ]) as Promise<ConversationDocument>;
   }
 

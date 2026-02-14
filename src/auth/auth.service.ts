@@ -10,6 +10,7 @@ import { PasswordHashService } from './services/password-hasher.service';
 import { TokenService } from './services/token.service';
 import { CreateUserDto, LoginUserDto, UpdateOnboardingDto, UploadImageDto } from './dto/auth.dto';
 import { AuthRepository } from './repositories/auth.repository';
+import { MailService } from '../mail/mail.service';
 import { Response } from 'express';
 
 @Injectable()
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly passwordHasher: PasswordHashService,
     private readonly tokenService: TokenService,
+    private readonly mailService: MailService,
   ) {}
 
   async registerUser(createUserDto: CreateUserDto): Promise<Auth> {
@@ -35,7 +37,7 @@ export class AuthService {
 
     const hashedPassword = await this.passwordHasher.hash(password);
 
-    return this.authRepository.create({
+    const user = await this.authRepository.create({
       name: name ?? '',
       email,
       password: hashedPassword,
@@ -43,6 +45,12 @@ export class AuthService {
       location: location ?? '',
       phone: phone ?? '',
     });
+
+    this.mailService.sendWelcomeEmail({ to: email, name: user.name }).catch((err) => {
+      this.logger.warn(`Welcome email failed for ${email}: ${err?.message ?? err}`);
+    });
+
+    return user;
   }
 
   async login(
